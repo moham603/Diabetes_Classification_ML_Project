@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import joblib
-from typing import Dict, Any, List
 
 
 # =========================================================
@@ -163,15 +162,10 @@ st.markdown("""
 
 .result-card {
     margin-top: 30px;
-
     padding: 32px;
-
     border-radius: 18px;
-
     text-align: center;
-
     background: white;
-
     border: 1px solid #E2E8F0;
 
     box-shadow:
@@ -181,9 +175,7 @@ st.markdown("""
 .result-label {
     font-size: 18px;
     font-weight: 700;
-
     color: #64748B;
-
     margin-bottom: 10px;
 }
 
@@ -207,11 +199,8 @@ st.markdown("""
 
 .stAlert {
     margin-top: 15px;
-
     border-radius: 12px;
-
     font-size: 15px;
-
     font-weight: 600;
 }
 
@@ -222,19 +211,15 @@ st.markdown("""
 
 .info-box {
     margin-top: 30px;
-
     padding: 17px 20px;
-
     border-radius: 12px;
 
     background: #EAF4FF;
-
     border: 1px solid #C9E2FF;
 
     color: #334155;
 
     font-size: 14px;
-
     line-height: 1.6;
 }
 
@@ -245,11 +230,8 @@ st.markdown("""
 
 .footer {
     text-align: center;
-
     margin-top: 25px;
-
     color: #94A3B8;
-
     font-size: 13px;
 }
 
@@ -258,18 +240,33 @@ st.markdown("""
 
 
 # =========================================================
-# LOAD MODEL
+# LOAD MODEL - CACHED
 # =========================================================
 
-model_data = joblib.load("diabetes_model.pkl")
+@st.cache_resource
+def load_model():
+    """
+    Load the trained ML model and preprocessing objects
+    only once and keep them cached.
+    """
 
-model = model_data["model"]
+    model_data = joblib.load("diabetes_model.pkl")
 
-scaler = model_data["scaler"]
+    model = model_data["model"]
+    scaler = model_data["scaler"]
+    gender_encoder = model_data["gender_encoder"]
+    class_encoder = model_data["class_encoder"]
 
-gender_encoder = model_data["gender_encoder"]
+    return (
+        model,
+        scaler,
+        gender_encoder,
+        class_encoder
+    )
 
-class_encoder = model_data["class_encoder"]
+
+# Load model
+model, scaler, gender_encoder, class_encoder = load_model()
 
 
 # =========================================================
@@ -311,7 +308,6 @@ st.markdown(
 
 col1, col2 = st.columns(2)
 
-
 with col1:
 
     age = st.number_input(
@@ -336,7 +332,6 @@ with col2:
 # =========================================================
 
 col1, col2 = st.columns(2)
-
 
 with col1:
 
@@ -366,7 +361,6 @@ with col2:
 
 col1, col2 = st.columns(2)
 
-
 with col1:
 
     bmi = st.number_input(
@@ -394,7 +388,6 @@ with col2:
 # =========================================================
 
 col1, col2 = st.columns(2)
-
 
 with col1:
 
